@@ -1,95 +1,135 @@
-import java.util.Scanner;  // Import the Scanner class
+import java.rmi.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.server.*;
+import java.util.Scanner;
+import java.net.*;
 
-public class Client {
-    public static void main(String[] args){
-        Scanner input = new Scanner(System.in);  // Create a Scanner object
+public class Client extends UnicastRemoteObject implements ICliente {
+
+	private IGatewayCliente gateway;
+
+	Client(IGatewayCliente gw) throws RemoteException {
+
+		this.gateway = gw;
+
+		run();
+
+	}
+
+	public void run(){
+
         int choice = -1;
-        System.out.println("Hello client! What do you want to do?");
 
-        do{
+		try (Scanner sc = new Scanner(System.in)) {
+			
+
             System.out.println("Please select one of the following options:");
             System.out.println("1. Index new URL");
             System.out.println("2. Search for URL");
-            System.out.println("3. Admin");
+            System.out.println("3. Search for keyword");
+            System.out.println("4. Admin");
             System.out.println("9. Exit\n");
 
-            // Read user input
-            try {
-                choice = input.nextInt();  // Read user input
-            } catch (java.util.InputMismatchException e) {
-                System.out.println("Invalid input. Please enter an integer.");
-                input.nextInt(); // Clear the scanner buffer
-            }
-            
-            String message = "";
-            String[] invalid = {"\\", "|", ";"};
 
-            switch(choice){
-                case 1:
-                    System.out.println("Index new URL");
-                    message += "type|" + Integer.toString(choice);
-                    System.out.println("Insert URL to be added: ");
-                    String url = input.nextLine();
-                    while (url.contains(invalid)){ // TO FIX
+			while (choice != 9) {
+                
+                // Read user input
+                try {
+                    choice = sc.nextInt();  // Read user input
 
-                    }
-                    message +=  url + '\n';
-                    // !!!  URL verification will be made on server side, no need for input handle !!!
-                    // Send message to the server
-                    System.out.println("URL " + url + " added to the server!");
-                    break;
+                } catch (java.util.InputMismatchException e) {
 
-                case 2:
-                    System.out.println("Search for URL/Keywords");
-                    message = message + "type|" + Integer.toString(choice) + "\n";
-                    // Send message to the server
-                    // Print server feedback
-                    break;
+                    System.err.println("Invalid input. Please enter an integer.");
+                    sc.nextLine(); // Clear the scanner buffer
+                    continue;
 
-                case 3:
-                    System.out.println("Admin");
-                    message = message + "type|" + Integer.toString(choice) + "\n";
-                    // Send message to the server
-                    // Print server feedback
-                    break;
+                }
+               
+                    
+                    
+                String userInput = new String();
+                StringBuilder url = new StringBuilder();
 
-                case 9:
-                    int option = -1;
-                    System.out.println("Are you sure you want to exit?");
-                    System.out.println("1. Yes");
-                    System.out.println("2. No");
-                    try {
-                        System.out.println("Please select a valid option:");
-                        option = input.nextInt();
-                    } catch (java.util.InputMismatchException e) {
-                        System.out.println("Invalid input. Please enter an integer.");
-                        option = input.nextInt();                            
-                    }
-                    if(option != 1 && option != 2){
-                        do{
-                            try {
-                                System.out.println("Please select a valid option:");
-                                option = input.nextInt();
-                            } catch (java.util.InputMismatchException e) {
-                                System.out.println("Invalid input. Please enter an integer.");
-                                option = input.nextInt();                            
-                            }
-                        }while(!(option == 1 || option == 2));
-                    }
-                    // Change choice to a non terminal value
-                    if(option == 2){
-                        choice = -1;
-                    }
-                    break;
+                CharSequence invalid = new StringBuilder("\\|;");
+        
+                switch(choice){
 
-                default:
-                    System.out.println("There was an error in the input. Please try again.\n");
-                    break;
-            }
-        }
-        while (choice != 9);
-        input.close();
-    } 
+                    case 1:
 
+                        
+                        System.out.print("Insert URL to be added: ");
+                        userInput = sc.nextLine();
+
+                        if(userInput.contains(invalid)){
+                            System.err.println("Invalid url");
+                            break;
+                        }
+                        url = new StringBuilder(userInput);
+                        gateway.sendURLIndex(url);
+                        //System.out.println("URL " + url + " added to the server!");
+                        break;
     
+                    case 2:
+
+                        System.out.print("Insert URL/Keyword to be searched: ");
+
+                        userInput = sc.nextLine();
+
+                        if(userInput.contains(invalid)){
+                            System.err.println("Invalid input");
+                            break;
+                        }
+
+                        url = new StringBuilder(userInput);
+                        gateway.searchInput(url);
+                        //System.out.println("URL " + url + " added to the server!");
+                        break;
+    
+    
+                    case 3:
+
+                        //System.out.println("Admin");
+                        
+                        // Send message to the server
+                        // Print server feedback
+                        break;
+
+                    case 9:
+                        
+                        System.out.println("Goodbye");
+                        break;
+    
+                    default:
+                        System.out.println("There was an error in the input. Please try again.\n");
+                        break;
+                }
+                
+            }
+                
+            sc.close();
+
+		} catch (Exception e) {
+			System.out.println("Exception in main: " + e);
+		}
+	}
+
+	public static void main(String args[]) {
+	
+        try {
+
+            IGatewayCliente gateway = (IGatewayCliente)LocateRegistry.getRegistry(9000).lookup("Gateway");
+        
+		
+			Client c = new Client(gateway);
+
+		}catch(RemoteException re){
+            System.out.println("Cant connect to Gateway");
+        } catch(Exception e){
+            System.out.println("Exception in main: " + e);
+        }
+
+
+
+	}
+
 }
