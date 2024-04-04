@@ -1,30 +1,48 @@
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 public class Downloader {
 
-    public static void downloadPage(String url, String filename) {
+    private int downloaderID;
+    private int packetID;
+
+    public static void main(String args[]) {
+        String url = "https://www.uc.pt"; //args[0];
+
+        String wordList = "type | word_list; ";
+        String linkList = "type | links_list; item_count | ";
+
+        
         try {
-            Document document = Jsoup.connect(url).get();
-            String htmlContent = document.outerHtml();
+            //fazer o pedido ao URL
+            Document doc = Jsoup.connect(url).get();
 
-            // Write HTML content to file
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(htmlContent);
-            writer.close();
+            //Separar palavras
+            StringTokenizer tokens = new StringTokenizer(doc.text());
 
-            System.out.println("Page downloaded successfully to: " + filename);
+            int countTokens = 0; //counter, para n imprimir mais de 100
+
+            
+            while (tokens.hasMoreElements() && countTokens++ < 100){
+
+
+
+            }
+                System.out.println(tokens.nextToken().toLowerCase());
+
+            //extrair os links para outras páginas
+            Elements links = doc.select("a[href]");
+
+            //percorrer e imprimir (texto + link)
+            for (Element link : links)
+                System.out.println(link.text() + "\n" + link.attr("abs:href") + "\n");
+
         } catch (IOException e) {
-            System.err.println("Error while downloading page: " + e.getMessage());
+            e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        String url = "https://uc.pt"; // Specify the URL to download
-        String filename = "downloaded_page.html"; // Specify the filename to save the downloaded page
-        downloadPage(url, filename);
     }
 }
