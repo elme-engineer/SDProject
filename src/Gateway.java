@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Gateway {
-    //static Hello_C_I client;
 
-	//private IClient clientCallback;
+	private ICliente clientCallback;
 
 	public ArrayList<ICliente> clientes;
 
@@ -19,7 +18,7 @@ public class Gateway {
 		LocateRegistry.createRegistry(1099);
 
 		try {
-			Naming.rebind("XPTO", (IGateway)this);
+			Naming.rebind("Gateway", (IGateway)this);
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
@@ -39,7 +38,7 @@ public class Gateway {
 				//client.print_on_client(a);
 			}
 		} catch (Exception re) {
-			System.out.println("Exception in HelloImpl.main: " + re);
+			System.out.println("Exception in Gateway.main: " + re);
 		}
 	}
 
