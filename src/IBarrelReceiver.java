@@ -3,9 +3,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
 
-import Downloader;
-
-public class IBarrelReceiver {
+public class IBarrelReceiver implements Runnable {
     private final String MULTICAST_ADDRESS = "224.3.2.1";
     private final int MULTICAST_PORT = 4444;
 
@@ -14,16 +12,16 @@ public class IBarrelReceiver {
      */
     public final int BUFFER_SIZE = 4098;
 
-    private static Barrels barrel = new Barrels();
+    private Barrels barrel;
 
     /**
-     * Allows this thread to write the information recieved to the 
-     * datastructure
+     * Allows this thread to write the information received to the 
+     * data structure
      * 
      * @param barrel The structure storing the data for the webpages
      */
     public IBarrelReceiver(Barrels barrel) {
-        IBarrelReceiver.barrel = barrel;
+        this.barrel = barrel;
     }
 
     @Override
@@ -33,17 +31,17 @@ public class IBarrelReceiver {
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
             socket.joinGroup(group);
             byte[] buffer = new byte[BUFFER_SIZE];
-            while(true){
+            while (true) {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 socket.receive(packet);
                 String message = new String(packet.getData(), 0, packet.getLength());
-                //System.out.println(message);
+                // System.out.println(message);
                 String[] content = message.split("  ");
                 if (content.length > 0 && (content[0].compareTo("data") == 0)) {
-                    if (lastSeen.containsKey(content[1]) == false) {
+                    if (!lastSeen.containsKey(content[1])) {
                         try {
                             lastSeen.put(content[1], Integer.parseInt(content[2]));
-                        } catch(NumberFormatException e) {
+                        } catch (NumberFormatException e) {
                             lastSeen.put(content[1], 0);
                         }
                     } else {
@@ -53,16 +51,16 @@ public class IBarrelReceiver {
                         }
                     }
                     System.out.println(content[3]);
+                    barrel.write(Page.deserialize(content[3]));
                 }
-                barrel.write(DataPackage.deserialize(content[3]));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
     }
 
-    private void repair(String id, int missing){
-
+    private void repair(String id, int missing) {
+        // Implement repair logic here if needed.
+        // This method is currently empty.
     }
 }

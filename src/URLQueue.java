@@ -74,12 +74,8 @@ public class URLQueue extends UnicastRemoteObject implements IQueue{
      * @throws RemoteException if RMI remote exception occurs
      */
     public void checkDownloaderHeartbeat(int index) throws RemoteException {
-        try {
-            this.downloaderList.get(index).setState(this.downloaderList.get(index).getDownloader().Heartbeat());
-            //System.out.println("Downloader " + i + " is ok");
-        } catch (RemoteException e) {
-            this.downloaderList.get(index).setState(false);
-        }
+        this.downloaderList.get(index).setState(this.downloaderList.get(index).getDownloader().Heartbeat());
+        //System.out.println("Downloader " + i + " is ok");
     }
 
     /**

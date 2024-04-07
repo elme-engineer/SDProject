@@ -2,7 +2,6 @@ import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.*;
 import java.util.Scanner;
-import java.net.*;
 
 public class Client extends UnicastRemoteObject implements ICliente {
 
@@ -127,9 +126,12 @@ public class Client extends UnicastRemoteObject implements ICliente {
         } catch(Exception e){
             System.out.println("Exception in main: " + e);
         }
-
-
-
 	}
+
+    @Override
+    public void atualizaAdminPage(String s) throws RemoteException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'atualizaAdminPage'");
+    }
 
 }

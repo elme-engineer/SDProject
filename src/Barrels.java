@@ -1,55 +1,75 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class Barrels {
     private HashMap<String, HashSet<String>> wordIndex;
     private HashMap<String, HashSet<String>> linkIndex;
+    private HashMap<String, Page> page;
 
     /**
-     * Constructor for a Barrel datastructure. 
+     * Constructor for a Barrel data structure.
      */
     public Barrels() {
         wordIndex = new HashMap<>();
         linkIndex = new HashMap<>();
+        page = new HashMap<>();
     }
 
     /**
      * Indexes the downloaded contents of a webpage in the Barrel.
-     * 
+     *
      * @param data Contains the contents of a webpage including link, title, quote, words, and links.
      */
-    public void write(DataPackage data) {
-        for (String word : data.getWords()) {
-
-            if (this.allowsWord(word)) {
-                HashSet<String> aux = new HashSet<>();
-
+    public void write(Page data) {
+        for (String word : data.words) {
+            if (allowsWord(word)) {
                 word = word.toLowerCase();
-                // Checks if the word already exists
-                if (wordIndex.containsKey(word)) { 
-                    aux = wordIndex.get(word);
-                }
-
-                aux.add(data.getUrl());
+                HashSet<String> aux = wordIndex.getOrDefault(word, new HashSet<>());
+                aux.add(data.link);
                 wordIndex.put(word, aux);
             }
-
         }
 
-        for (String link : data.getLinks()) {
-            HashSet<String> aux = new HashSet<>();
-            // Checks if the link already exists
-            if (linkIndex.containsKey(link)) { 
-                aux = linkIndex.get(link);
-            }
-            aux.add(data.getUrl());
+        for (String link : data.links) {
+            HashSet<String> aux = linkIndex.getOrDefault(link, new HashSet<>());
+            aux.add(data.link);
             linkIndex.put(link, aux);
         }
 
-        Page p = pageIndex.get(data.getUrl());
-        if (p == null) {
-            p = new Page(data.getQuote(), data.getTitle(), data.getUrl());
-            pageIndex.put(data.getUrl(), p);
+        if (!page.containsKey(data.link)) {
+            page.put(data.link, data);
         }
-    };
+    }
+
+    private boolean allowsWord(String word) {
+        // Implement word filtering logic here if needed.
+        // For now, assuming all words are allowed.
+        return true;
+    }
+
+    public HashMap<String, HashSet<String>> readWords(List<String> words) {
+        // Implement logic to retrieve links associated with given words.
+        // For now, returning an empty map.
+        return new HashMap<>();
+    }
+
+    public HashMap<String, Integer> linkImportance(List<String> links) {
+        // Implement logic to calculate link importance based on criteria.
+        // For now, returning an empty map.
+        return new HashMap<>();
+    }
+
+    public HashSet<String> searchLinks(String url) {
+        // Implement logic to search for links associated with given URL.
+        // For now, returning an empty set.
+        return new HashSet<>();
+    }
+
+    public List<Page> readLinks(List<String> links) {
+        // Implement logic to read pages associated with given links.
+        // For now, returning an empty list.
+        return new ArrayList<>();
+    }
 }
