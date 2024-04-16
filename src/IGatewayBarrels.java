@@ -51,6 +51,5 @@ public class IGatewayBarrels implements IBarrels{
     public List<Page> readLinks(List<String> links) throws RemoteException {
         return barrel.readLinks(links);
     }
-    
 }
 

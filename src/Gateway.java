@@ -1,11 +1,13 @@
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Gateway {
+public class Gateway extends UnicastRemoteObject implements IGateway, Serializable{
 
 	private ICliente clientCallback;
 
@@ -17,12 +19,14 @@ public class Gateway {
 
 		LocateRegistry.createRegistry(1099);
 
+		 
 		try {
 			Naming.rebind("Gateway", (IGateway)this);
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
-		run();
+		
+		//run();
 	}
 
 	public void run(){

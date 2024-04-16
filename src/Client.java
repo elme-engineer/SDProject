@@ -5,11 +5,11 @@ import java.util.Scanner;
 
 public class Client extends UnicastRemoteObject implements ICliente {
 
-	private IGatewayCliente gateway;
+	private IGateway gateway;
 
-	Client(IGatewayCliente gw) throws RemoteException {
+	Client(IGateway gateway2) throws RemoteException {
 
-		this.gateway = gw;
+		this.gateway = gateway2;
 
 		run();
 
@@ -64,7 +64,7 @@ public class Client extends UnicastRemoteObject implements ICliente {
                             break;
                         }
                         url = new StringBuilder(userInput);
-                        gateway.sendURLIndex(url);
+                        //gateway.sendURLIndex(url);
                         //System.out.println("URL " + url + " added to the server!");
                         break;
     
@@ -80,7 +80,7 @@ public class Client extends UnicastRemoteObject implements ICliente {
                         }
 
                         url = new StringBuilder(userInput);
-                        gateway.searchInput(url);
+                        //gateway.searchInput(url);
                         //System.out.println("URL " + url + " added to the server!");
                         break;
     
@@ -116,13 +116,13 @@ public class Client extends UnicastRemoteObject implements ICliente {
 	
         try {
 
-            IGatewayCliente gateway = (IGatewayCliente)LocateRegistry.getRegistry(9000).lookup("Gateway");
+            IGateway gateway = (IGateway)LocateRegistry.getRegistry(1099).lookup("Gateway");
         
 		
 			Client c = new Client(gateway);
 
 		}catch(RemoteException re){
-            System.out.println("Cant connect to Gateway");
+            System.out.println("Cant connect to Gateway\n");
         } catch(Exception e){
             System.out.println("Exception in main: " + e);
         }
@@ -133,5 +133,4 @@ public class Client extends UnicastRemoteObject implements ICliente {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'atualizaAdminPage'");
     }
-
 }

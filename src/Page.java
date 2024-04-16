@@ -99,6 +99,4 @@ public class Page implements Serializable {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deserialize'");
     }
-
-    // You can add serialization and deserialization methods here if needed
 }
